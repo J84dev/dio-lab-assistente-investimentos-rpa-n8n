@@ -6,11 +6,13 @@ Aprenda na prática como criar um fluxo de automação inteligente combinando t�
 
 Neste desafio, você vai construir um assistente de investimentos automatizado. O fluxo começa com a extração de dados de clientes em uma página web usando Python, passa pela orquestração de um workflow no N8N e termina com a geração de mensagens personalizadas para cada perfil de investidor.
 
-O projeto foi pensado para ser simples e acessível, mesmo para quem está dando os primeiros passos em Python e automação. A ideia é que você entenda o conceito de RPA de forma leve e aplique tudo em um cenário realista do mercado financeiro.
 
 <details>
-<summary>Clique para expandir ou minimizar</summary>
+<summary>Clique para expandir ou minimizar o restante do conteúdo original</summary>
+
   
+O projeto foi pensado para ser simples e acessível, mesmo para quem está dando os primeiros passos em Python e automação. A ideia é que você entenda o conceito de RPA de forma leve e aplique tudo em um cenário realista do mercado financeiro.
+
 ## Objetivo do Projeto
 
 Desenvolver um pipeline de automação que:
