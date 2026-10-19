@@ -131,7 +131,7 @@ Conecte o Agente de IA do N8N a um modelo como Gemini ou GPT para:
 ### MVP (Mínimo Viável)
 
 - [X] Repositório forkado com o workflow N8N implementado
-- [X] Workflow N8N exportado (`n8n/workflow.json`) com mensagens estáticas
+- [X] Workflow N8N exportado (`n8n/workflow.json`) com mensagens estáticas<br >
       https://github.com/J84dev/dio-lab-assistente-investimentos-rpa-n8n/blob/main/n8n/N8N_Lab_Santander_minimo_20261018.json
 - [X] Script de RPA integrado ao Webhook do N8N
 - [X] Print ou vídeo demonstrando o fluxo funcionando de ponta a ponta<br >
@@ -142,8 +142,8 @@ Conecte o Agente de IA do N8N a um modelo como Gemini ou GPT para:
 - [X] Todos os itens do MVP
 - [X] Integração com Agente de IA no N8N
 - [X] Mensagens geradas dinamicamente via LLM
-- [X] Workflow N8N exportado (`n8n/workflow.json`) com mensagens dinâmicas
-      https://github.com/J84dev/dio-lab-assistente-investimentos-rpa-n8n/blob/main/n8n/N8N_Lab_Santander_completo_20261018.json
+- [X] Workflow N8N exportado (`n8n/workflow.json`) com mensagens dinâmicas<br >
+      [N8N_Lab_Santander_completo_20261018] (https://github.com/J84dev/dio-lab-assistente-investimentos-rpa-n8n/blob/main/n8n/N8N_Lab_Santander_completo_20261018.json)
 - [X] Documentação explicando as decisões técnicas
       Itens relevantes a serem comentados:
       - utilização de IA local (questão de debate importante para empresas em relação a exposição de dados;
