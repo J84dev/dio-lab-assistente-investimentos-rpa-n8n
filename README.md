@@ -8,6 +8,9 @@ Neste desafio, você vai construir um assistente de investimentos automatizado. 
 
 O projeto foi pensado para ser simples e acessível, mesmo para quem está dando os primeiros passos em Python e automação. A ideia é que você entenda o conceito de RPA de forma leve e aplique tudo em um cenário realista do mercado financeiro.
 
+<details>
+<summary>Clique para expandir ou minimizar</summary>
+  
 ## Objetivo do Projeto
 
 Desenvolver um pipeline de automação que:
@@ -119,6 +122,8 @@ Conecte o Agente de IA do N8N a um modelo como Gemini ou GPT para:
 - Analisar o contexto do cliente (saldo, perfil)
 - Gerar mensagens únicas e personalizadas
 - Criar recomendações mais inteligentes e humanizadas
+
+</details>
 
 ## Entregáveis
 
