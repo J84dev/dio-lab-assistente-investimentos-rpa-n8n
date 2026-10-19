@@ -131,17 +131,25 @@ Conecte o Agente de IA do N8N a um modelo como Gemini ou GPT para:
 ### MVP (Mínimo Viável)
 
 - [X] Repositório forkado com o workflow N8N implementado
-- [ ] Workflow N8N exportado (`n8n/workflow.json`) com mensagens estáticas
-- [ ] Script de RPA integrado ao Webhook do N8N
+- [X] Workflow N8N exportado (`n8n/workflow.json`) com mensagens estáticas
+- [X] Script de RPA integrado ao Webhook do N8N
 - [X] Print ou vídeo demonstrando o fluxo funcionando de ponta a ponta<br >
       https://youtu.be/mgNYiUGkTWg
 
 ### Desafio Completo
 
-- [ ] Todos os itens do MVP
-- [ ] Integração com Agente de IA no N8N
-- [ ] Mensagens geradas dinamicamente via LLM
-- [ ] Documentação explicando as decisões técnicas
+- [X] Todos os itens do MVP
+- [X] Integração com Agente de IA no N8N
+- [X] Mensagens geradas dinamicamente via LLM
+- [X] Workflow N8N exportado (`n8n/workflow.json`) com mensagens dinâmicas
+      
+- [X] Documentação explicando as decisões técnicas
+      Itens relevantes a serem comentados:
+      - utilização de IA local (questão de debate importante para empresas em relação a exposição de dados;
+      - utilização de e-mail temporário (o primeiro aleatório encontrado no google) para testar o envio;
+      - 
+- [X] Print ou vídeo demonstrando o fluxo funcionando de ponta a ponta<br >
+      https://www.youtube.com/watch?v=vMbBWb4Zw8o
 
 <details>
 <summary>Clique para expandir ou minimizar o restante do conteúdo original</summary>
