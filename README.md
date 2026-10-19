@@ -8,7 +8,7 @@ Neste desafio, você vai construir um assistente de investimentos automatizado. 
 
 
 <details>
-<summary>Clique para expandir ou minimizar o restante do conteúdo original</summary>
+<summary>**Clique para expandir ou minimizar o restante do conteúdo original**</summary>
 
   
 O projeto foi pensado para ser simples e acessível, mesmo para quem está dando os primeiros passos em Python e automação. A ideia é que você entenda o conceito de RPA de forma leve e aplique tudo em um cenário realista do mercado financeiro.
