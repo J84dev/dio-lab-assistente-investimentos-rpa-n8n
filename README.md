@@ -127,6 +127,7 @@ Conecte o Agente de IA do N8N a um modelo como Gemini ou GPT para:
 
 </details>
 <br >
+
 ## Entregáveis
 
 ### MVP (Mínimo Viável)
