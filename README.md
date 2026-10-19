@@ -143,7 +143,7 @@ Conecte o Agente de IA do N8N a um modelo como Gemini ou GPT para:
 - [X] Integração com Agente de IA no N8N
 - [X] Mensagens geradas dinamicamente via LLM
 - [X] Workflow N8N exportado (`n8n/workflow.json`) com mensagens dinâmicas<br >
-      [N8N_Lab_Santander_completo_20261018] (https://github.com/J84dev/dio-lab-assistente-investimentos-rpa-n8n/blob/main/n8n/N8N_Lab_Santander_completo_20261018.json)
+      [N8N_Lab_Santander_completo_20261018](https://github.com/J84dev/dio-lab-assistente-investimentos-rpa-n8n/blob/main/n8n/N8N_Lab_Santander_completo_20261018.json)
 - [X] Documentação explicando as decisões técnicas
       Itens relevantes a serem comentados:
       - utilização de IA local (questão de debate importante para empresas em relação a exposição de dados;
