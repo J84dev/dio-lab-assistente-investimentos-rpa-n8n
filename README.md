@@ -144,6 +144,9 @@ Conecte o Agente de IA do N8N a um modelo como Gemini ou GPT para:
 - [ ] Mensagens geradas dinamicamente via LLM
 - [ ] Documentação explicando as decisões técnicas
 
+<details>
+<summary>Clique para expandir ou minimizar o restante do conteúdo original</summary>
+  
 ## Estrutura do Repositório
 
 ```
@@ -178,3 +181,4 @@ Conecte o Agente de IA do N8N a um modelo como Gemini ou GPT para:
 **Bons estudos e mãos à obra** 🚀
 
 Se tiver dúvidas, lembre-se: a melhor forma de aprender é experimentando. Erre, corrija e celebre cada pequena vitória no caminho.
+</details>
