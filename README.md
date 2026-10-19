@@ -149,7 +149,7 @@ Conecte o Agente de IA do N8N a um modelo como Gemini ou GPT para:
       - utilização de e-mail temporário (o primeiro aleatório encontrado no google) para testar o envio;
       - 
 - [X] Print ou vídeo demonstrando o fluxo funcionando de ponta a ponta<br >
-      https://www.youtube.com/watch?v=vMbBWb4Zw8o
+      https://www.youtu.be/vMbBWb4Zw8o
 
 <details>
 <summary>Clique para expandir ou minimizar o restante do conteúdo original</summary>
