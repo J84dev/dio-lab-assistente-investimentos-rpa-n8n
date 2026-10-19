@@ -1,0 +1,247 @@
+{
+  "name": "N8N_Lab_Santander_20261018",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"sucesso\",\n  \"mensagem\": \"Clientes recebidos com sucesso!\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        80,
+        0
+      ],
+      "id": "489667c4-e9ad-4c7e-8b76-50bb97680b85",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "clientes",
+        "responseMode": "responseNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "data",
+                "value": "J84dev"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "f92570e1-728d-4762-8d9c-f82354ab27d7",
+      "name": "Receber dados clientes",
+      "webhookId": "fb425363-3fff-48a9-8e62-cf1080e9b743"
+    },
+    {
+      "parameters": {
+        "url": "https://j84dev.github.io/dio-lab-assistente-investimentos-rpa-n8n/data.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        256,
+        0
+      ],
+      "id": "8d19bc90-dca4-488c-9019-2874f12885c9",
+      "name": "Consultar dados csv"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Pega os dados do CSV do nó \"Consultar csv\"\nconst csvItem = $('Consultar dados csv').first();\nconst csvString = csvItem.json.data || csvItem.json.body || '';\n\n// 2. Processa o CSV limpando espaços e quebras de linha\nconst lines = csvString.replace(/\\r/g, '').trim().split('\\n');\nconst headers = lines[0].split(',').map(h => h.trim().toLowerCase());\n\nconst produtos = [];\nfor (let i = 1; i < lines.length; i++) {\n  const line = lines[i].trim();\n  if (!line) continue;\n  const currentLine = line.split(',');\n  const obj = {};\n  for (let j = 0; j < headers.length; j++) {\n    obj[headers[j]] = currentLine[j] ? currentLine[j].trim() : '';\n  }\n  produtos.push(obj);\n}\n\n// 3. Captura os clientes considerando o .body do Webhook do n8n\nlet clientes = [];\nconst webhookItems = $('Receber dados clientes').all();\nfor (const item of webhookItems) {\n  // O n8n guarda o JSON enviado pelo POST dentro de .body ou diretamente em .json\n  const payload = item.json.body || item.json;\n  const listaClientes = payload.clientes || payload.Clientes;\n  \n  if (listaClientes && Array.isArray(listaClientes)) {\n    clientes = clientes.concat(listaClientes);\n  } else if (Array.isArray(payload)) {\n    clientes = clientes.concat(payload);\n  } else if (payload.perfil) {\n    clientes.push(payload);\n  }\n}\n\n// Fallback de segurança caso o webhook venha vazio por algum motivo de teste\nif (clientes.length === 0) {\n  clientes = [\n    { nome: \"Ana Silva\", email: \"ana@email.com\", saldo: \"R$ 12.500,00\", perfil: \"Conservador\" },\n    { nome: \"Bruno Lima\", email: \"bruno@email.com\", saldo: \"R$ 3.200,00\", perfil: \"Moderado\" },\n    { nome: \"Carla Souza\", email: \"carla@email.com\", saldo: \"R$ 28.900,00\", perfil: \"Arrojado\" }\n  ];\n}\n\n// 4. Faz o cruzamento por perfil ignorando maiúsculas/minúsculas\nconst resultado = clientes.map(cliente => {\n  const perfilCliente = (cliente.perfil || '').toString().trim().toLowerCase();\n  \n  const recomendacoes = produtos.filter(p => {\n    const perfilProduto = (p.perfil || '').toString().trim().toLowerCase();\n    return perfilProduto === perfilCliente;\n  });\n\n  const autor = \"J84dev\";\n\n  return {\n    json: {\n      nome: cliente.nome || '',\n      email: cliente.email || '',\n      saldo: cliente.saldo || '',\n      perfil: cliente.perfil || '',\n      recomendacoes: recomendacoes\n    }\n  };\n});\n\nreturn resultado;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        0
+      ],
+      "id": "9b17d7e7-792a-4621-8216-7dca3afa3881",
+      "name": "Cruzar de dados clientes x perfis"
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:8b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        704,
+        272
+      ],
+      "id": "0fe04b21-54ab-4875-a13e-0ebf3798961a",
+      "name": "Ollama Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "HgLmvnNAV8KdmvU1",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Responda APENAS com a mensagem final em português. Não inclua pensamentos, explicações nem introduções.\n\nCrie uma mensagem amigável para o cliente recomendando as opções de investimento com base nos dados fornecidos:\n\nNome: {{ $json.nome }}\nPerfil: {{ $json.perfil }}\nSaldo: {{ $json.saldo }}\nRecomendações: {{ JSON.stringify($json.recomendacoes) }}",
+        "messages": {
+          "messageValues": []
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        640,
+        112
+      ],
+      "id": "0cb6fd43-360e-4247-af14-e93cf23230c2",
+      "name": "Criar mensagens"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Sugestão de investimento",
+        "message": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        16
+      ],
+      "id": "2387db7b-cc83-40fb-b962-306e56ffd6ac",
+      "name": "Send a message",
+      "webhookId": "012ada16-95f9-4975-85fc-79eb654215bd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "wadIos4dtS4PtJin",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        928,
+        16
+      ],
+      "id": "6ab1a551-15f6-4eeb-b230-3c8fbf4bd57b",
+      "name": "Add msg a cliente"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "Consultar dados csv",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receber dados clientes": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar dados csv": {
+      "main": [
+        [
+          {
+            "node": "Cruzar de dados clientes x perfis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cruzar de dados clientes x perfis": {
+      "main": [
+        [
+          {
+            "node": "Criar mensagens",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Add msg a cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Criar mensagens",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar mensagens": {
+      "main": [
+        [
+          {
+            "node": "Add msg a cliente",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Add msg a cliente": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "7fcc1132-dbb3-47c9-ba5a-3e3d619153a6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "26a05508501c4a88d4d298454ef67e3413b52368b4a6de3e5677aecad1128caf"
+  },
+  "nodeGroups": [],
+  "id": "YrN0aGoPDCLJ9JFa",
+  "tags": []
+}

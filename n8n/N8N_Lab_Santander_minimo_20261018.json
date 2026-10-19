@@ -1,0 +1,150 @@
+{
+  "name": "N8N_Lab_Santander_20261018",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"sucesso\",\n  \"mensagem\": \"Clientes recebidos com sucesso!\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        832,
+        0
+      ],
+      "id": "489667c4-e9ad-4c7e-8b76-50bb97680b85",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "clientes",
+        "responseMode": "responseNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "data",
+                "value": "J84dev"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        48,
+        0
+      ],
+      "id": "f92570e1-728d-4762-8d9c-f82354ab27d7",
+      "name": "Receber dados clientes",
+      "webhookId": "fb425363-3fff-48a9-8e62-cf1080e9b743"
+    },
+    {
+      "parameters": {
+        "url": "https://j84dev.github.io/dio-lab-assistente-investimentos-rpa-n8n/data.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        256,
+        0
+      ],
+      "id": "8d19bc90-dca4-488c-9019-2874f12885c9",
+      "name": "Consultar dados csv"
+    },
+    {
+      "parameters": {
+        "jsCode": "// O n8n recebe os itens através de $input.all()\nreturn $input.all().map(item => {\n  const cliente = item.json;\n  \n  // Monta a lista de produtos recomendados em texto\n  let listaProdutos = \"\";\n  if (cliente.recomendacoes && cliente.recomendacoes.length > 0) {\n    listaProdutos = cliente.recomendacoes.map(rec => {\n      return `• ${rec.produto}: Mínimo de R$ ${rec.minimo} (Rentabilidade: ${rec.rentabilidade})`;\n    }).join('\\n');\n  } else {\n    listaProdutos = \"• Nenhum produto específico recomendado no momento.\";\n  }\n\n  // Gera a mensagem personalizada\n  const mensagem = `Olá, ${cliente.nome}!\n\nIdentificamos que seu perfil de investidor é ${cliente.perfil} e seu saldo atual disponível é de ${cliente.saldo}.\n\nCom base no seu perfil, selecionamos as seguintes opções de investimento recomendadas para você:\n\n${listaProdutos}\n\nAcesse nossa plataforma para aplicar agora mesmo ou entre em contato com o seu especialista!`;\n\n  return {\n    json: {\n      ...cliente,\n      mensagem: mensagem\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        0
+      ],
+      "id": "c551f8ce-e769-4b4a-afc3-f438d224a130",
+      "name": "Gerar mensagem personalizada"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Pega os dados do CSV do nó \"Consultar csv\"\nconst csvItem = $('Consultar dados csv').first();\nconst csvString = csvItem.json.data || csvItem.json.body || '';\n\n// 2. Processa o CSV limpando espaços e quebras de linha\nconst lines = csvString.replace(/\\r/g, '').trim().split('\\n');\nconst headers = lines[0].split(',').map(h => h.trim().toLowerCase());\n\nconst produtos = [];\nfor (let i = 1; i < lines.length; i++) {\n  const line = lines[i].trim();\n  if (!line) continue;\n  const currentLine = line.split(',');\n  const obj = {};\n  for (let j = 0; j < headers.length; j++) {\n    obj[headers[j]] = currentLine[j] ? currentLine[j].trim() : '';\n  }\n  produtos.push(obj);\n}\n\n// 3. Captura os clientes considerando o .body do Webhook do n8n\nlet clientes = [];\nconst webhookItems = $('Receber dados clientes').all();\nfor (const item of webhookItems) {\n  // O n8n guarda o JSON enviado pelo POST dentro de .body ou diretamente em .json\n  const payload = item.json.body || item.json;\n  const listaClientes = payload.clientes || payload.Clientes;\n  \n  if (listaClientes && Array.isArray(listaClientes)) {\n    clientes = clientes.concat(listaClientes);\n  } else if (Array.isArray(payload)) {\n    clientes = clientes.concat(payload);\n  } else if (payload.perfil) {\n    clientes.push(payload);\n  }\n}\n\n// Fallback de segurança caso o webhook venha vazio por algum motivo de teste\nif (clientes.length === 0) {\n  clientes = [\n    { nome: \"Ana Silva\", email: \"ana@email.com\", saldo: \"R$ 12.500,00\", perfil: \"Conservador\" },\n    { nome: \"Bruno Lima\", email: \"bruno@email.com\", saldo: \"R$ 3.200,00\", perfil: \"Moderado\" },\n    { nome: \"Carla Souza\", email: \"carla@email.com\", saldo: \"R$ 28.900,00\", perfil: \"Arrojado\" }\n  ];\n}\n\n// 4. Faz o cruzamento por perfil ignorando maiúsculas/minúsculas\nconst resultado = clientes.map(cliente => {\n  const perfilCliente = (cliente.perfil || '').toString().trim().toLowerCase();\n  \n  const recomendacoes = produtos.filter(p => {\n    const perfilProduto = (p.perfil || '').toString().trim().toLowerCase();\n    return perfilProduto === perfilCliente;\n  });\n\n  const autor = \"J84dev\";\n\n  return {\n    json: {\n      nome: cliente.nome || '',\n      email: cliente.email || '',\n      saldo: cliente.saldo || '',\n      perfil: cliente.perfil || '',\n      recomendacoes: recomendacoes\n    }\n  };\n});\n\nreturn resultado;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        0
+      ],
+      "id": "9b17d7e7-792a-4621-8216-7dca3afa3881",
+      "name": "Cruzar de dados clientes x perfis"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Receber dados clientes": {
+      "main": [
+        [
+          {
+            "node": "Consultar dados csv",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar dados csv": {
+      "main": [
+        [
+          {
+            "node": "Cruzar de dados clientes x perfis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar mensagem personalizada": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cruzar de dados clientes x perfis": {
+      "main": [
+        [
+          {
+            "node": "Gerar mensagem personalizada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "497ce45e-7dea-4ed9-ac4c-2688d803a1cd",
+  "meta": {
+    "instanceId": "26a05508501c4a88d4d298454ef67e3413b52368b4a6de3e5677aecad1128caf"
+  },
+  "nodeGroups": [],
+  "id": "YrN0aGoPDCLJ9JFa",
+  "tags": []
+}
